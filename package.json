@@ -1,0 +1,32 @@
+{
+  "name": "lately-simulations",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Simulations and experiments related to Lately sequence predictor",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/axelpale/lately-simulations.git"
+  },
+  "scripts": {
+    "lint": "eslint . && echo 'Lint successful.'",
+    "prediction-error": "node prediction-error/index.js"
+  },
+  "keywords": [
+    "sequence learning",
+    "simulation",
+    "machine learning"
+  ],
+  "author": {
+    "name": "Akseli Palén",
+    "email": "akseli.palen@gmail.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^3.19.0"
+  },
+  "dependencies": {
+    "lately": "0.0.3",
+    "lodash": "^4.17.4"
+  }
+}
