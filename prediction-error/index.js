@@ -52,11 +52,14 @@ var reward = function (prior, p) {
   return Math.log(p / (1 - p)) - Math.log(prior / (1 - prior));
 };
 
-var slack = function (x) {
+var slack = function (n) {
+  // Returns a damping multiplier between 0..1 for rewards.
+  // The higher the number of samples, the closer the multiplier to 1.
+  //
   // Parameters:
-  //   x is number of observations
-  var lnx = Math.log(x);
-  return 0.95 * Math.exp(-lnx * lnx / 6);
+  //   n
+  //     number of observations
+  return 1 - Math.sqrt(2 / n);
 };
 
 var expectedReward = function (pop, sam) {
@@ -73,7 +76,7 @@ var expectedReward = function (pop, sam) {
   return evs.reduce(function (acc, ev) {
     var pp = pop.prob(ev);
     var p = sam.prob(ev);
-    var rew = Math.abs(reward(pp, p));
+    var rew = reward(pp, p);
 
     // Rare events happen more rarely, thus the reward comes more rarely.
     // However, the reward will be greater for rare events, thus canceling
@@ -141,8 +144,8 @@ var results = populations.map(function (pop) {
       // Compare
       var rew = expectedReward(popcat, samcat);
 
-      // Give some slack, based on sample size
-      var slackRew = rew + slack(samcat.weightSum());
+      // Decrese the reward/penalty of young distributions.
+      var slackRew = rew * slack(samcat.weightSum());
 
       return slackRew;
     });
@@ -169,12 +172,12 @@ results.forEach(function (popResults) {
   triples.forEach(function (tri) {
     console.log('  Sample size:', tri[0]);
     console.log('  Avg. Expected reward:', tri[1]);
-    //console.log('  Avg. Expected reward after childhood slack:', tri[2]);
+    console.log('  Avg. Smoothed reward:', tri[2]);
     //console.log('  Exp. rewards:', tri[3]);
   });
 
   triples.forEach(function (tri) {
-    console.log(String(tri[0]), String(tri[1].toPrecision(5)));
+    //console.log(String(tri[0]), String(tri[1].toPrecision(5)));
     //console.log('{' + tri[0] + ', ' + tri[1].toPrecision(5) + '},');
   });
 });
